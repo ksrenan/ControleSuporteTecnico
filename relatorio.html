@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Controle de Máquinas - Suporte Técnico - PMSJP</title>
+    <link rel="icon" type="image/png" href="img/sao-jose-dos-pinhais.png" sizes="32x32" />
+    <link rel="stylesheet" type="text/css" href="css/estilo.css">
+    <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+    <script>
+        // URL base para os serviços da API
+        var baseURL = "http://localhost/ProjetoMachineControl/api/";
+        $(document).ready(function(){
+            $("#mensagem").hide();
+            $("#mensagem").click(function() {
+                $(this).hide("slow");
+            });
+            $("#etiqueta").focus();
+
+            $('#form').submit(function(){
+
+                decisao = confirm("Todos os dados estão corretos?");
+                if (decisao){
+
+
+                    var dados = '{' +
+                            '"etiqueta":"'+ $('#etiqueta').val() +'",' +
+                            '"local":"'+ $('#local').val() +'",' +
+                            '"problema_relatado":"'+ $('#problema_relatado').val() +'",' +
+                            '"o_que_foi_feito":"'+ $('#o_que_foi_feito').val() +'",' +
+                            '"antivirus":"'+ $('#antivirus').val() +'",' +
+                            '"so":"'+ $('#so').val() +'",' +
+                            '"utilizou_wds":"'+ $('#wds').val() +'",' +
+                            '"os":"'+ $('#os').val() +'",' +
+                            '"tecnico":"'+ $('#tecnico').val() +'"' +
+                            '}';
+
+                    $.ajax({
+                        type: 'POST',
+                        url: baseURL + 'registroDeMaquinas',
+                        contentType: 'application/json',
+                        data: dados,
+                        error: function(){
+                            $("#mensagem").html("Erro ao registrar informações :( ");
+                            $("#mensagem").css('background-color', 'red');
+                            $("#mensagem").show("slow");
+                            $("#etiqueta").focus();
+                        },
+                        success: function() {
+                            $("#mensagem").html("Informações do computador: " + $('#etiqueta').val() + " registradas com Sucesso :) ");
+                            $("#mensagem").css('background-color', 'RoyalBlue');
+                            $("#mensagem").show("slow");
+                            $('#form').each(function () {
+                                this.reset();
+                            });
+                            $("#etiqueta").focus();
+                            atualizaTabela();
+                        }
+                    });
+
+                } else {
+                    $("#etiqueta").focus();
+                }
+                return false; // Para não dar refresh na página após o envio do formulário
+            });
+
+            $("#opition1").css( 'cursor', 'pointer' );
+            $("#opition1").click(function (){
+                window.location.replace("index.html");
+            });
+
+            $("#opition2").css( 'cursor', 'pointer' );
+            $("#opition2").click(function (){
+                window.location.replace("relatorio.html");
+            });
+
+            $("#opition3").css( 'cursor', 'pointer' );
+            $("#opition3").click(function (){
+                window.location.replace("#verGrafico");
+            });
+
+            $("#etiqueta").keypress(function() {
+                $(this).val($(this).val().toUpperCase());
+            }).focusout(function() {
+                if($(this).val().length == 6){
+
+                    var first_char = $(this).val().charAt(0); // Pega o primeiro caractere da string
+
+                    if (first_char == "M" || first_char == "N") { // compara para ver se o técnico digitou uma etiqueta correta
+
+                    } else { // caso contrário pede para corrigir
+                        document.getElementById("etiqueta").focus();
+                        alert("Etiqueta Inválida!\n"+
+                                "Favor digitar Etiqueta Conforme Exemplo:\n"+
+                                "N01234 (Notebook) ou M01234 (Máquina)");
+                    }
+                }else{
+                    document.getElementById("etiqueta").focus();
+                }
+            });
+
+
+            atualizaTabela();
+        });
+
+        function atualizaTabela(){
+            $('#relatorio_mes').empty(); //Limpando a tabela
+            $('#relatorio_mes').append("<thead><tr><th title='Exemplo: M0XXXX'>ETIQUETA</th><th title='Exemplo: DEFESA CIVIL'>LOCAL</th><th title='DESCREVER RESUMIDAMENTE'>PROBLEMA RELATADO</th><th title='DESCREVER RESUMIDAMENTE'>O QUE FOI FEITO?</th><th title='SIM ou NÃO'>KASPERSKY</th><th title='Exemplo: WIN7/8/LINUX EDUCACIONAL'>S.O.</th><th title='SIM ou NÃO'>UTILIZOU WDS?</th><th title='Número da Ordem de serviço'>Nº O.S.</th><th TITLE='NOME TÉCNICO'>TÉCNICO</th><th TITLE='Data'>DATA</th><th TITLE='Excluir'>Excluir</th></tr></thead>");
+            /*var d = new Date();
+             var mes = d.getMonth();
+             var ano = d.getFullYear();
+             alert(mes+'/'+ano);*/
+            $.ajax({
+                type:'GET',		//Definimos o método HTTP usado
+                dataType: 'json',	//Definimos o tipo de retorno
+                url: baseURL + 'registroDeMaquinas',// /'+mes+'/'+ano, // rota de busca dos dados
+                success: function(dados){
+                    for(var i=0;dados.length>i;i++){
+                        //Adicionando registros retornados na tabela
+                        var dataBanco = dados[i].data;
+                        var dataArray = dataBanco.split("-");
+                        var dataFormatada = dataArray[2]+'/'+dataArray[1]+'/'+dataArray[0];
+                        $('#relatorio_mes').append('<tr><td>'+dados[i].etiqueta+'</td><td>'+dados[i].local+'</td><td>'+dados[i].problema_relatado+'</td><td>'+dados[i].o_que_foi_feito+'</td><td>'+dados[i].antivirus+'</td><td>'+dados[i].so+'</td><td>'+dados[i].utilizou_wds+'</td><td>'+dados[i].os+'</td><td>'+dados[i].tecnico+'</td><td>'+dataFormatada+'</td><td>'+null+'</td></tr>');
+                    }
+                    $('table tbody tr:odd').css('background', '#ccc'); //Zebrar tabela
+//                    $('table tbody tr').hover(
+//                            function(){
+//                                $(this).css('background', '#ccc');
+//                            },
+//                            function(){
+//                                $(this).css('background', '#FFF');
+//                            }
+//                    );
+                }
+            });
+        };
+
+    </script>
+</head>
+<body>
+<div id="mensagem">
+    Aqui vai aparecer a mensagem para o usuário
+</div> <!-- fecha div de mensagem -->
+<header>
+    <img src="img/sao-jose-dos-pinhais.png" height="100">
+    <h1>Controle de Máquinas - Suporte Técnico</h1>
+</header>
+<div id="menu">
+    <div id="opition1">
+        <!--<a href="#incluirRegistro">Incluir Registro</a>-->
+        <img src="img/add.png">
+        <label>Incluir Registro</label>
+    </div>
+    <div id="opition2">
+        <!-- <a href="#verRegistros">Ver Registros</a> -->
+        <img src="img/Registros.png">
+        <label>Ver Registros</label>
+    </div>
+    <div id="opition3">
+        <!--<a href="#verGrafico">Ver Gráfico do mês</a>-->
+        <img src="img/graphs.png">
+        <label>Ver Gráfico do mês</label>
+    </div>
+</div> <!-- fecha menu -->
+<br><br><br><br><br><br>
+<div id="busca">
+    <form action="" id="form" method="post">
+        <img src="img/busca.png" width="18" height="18" alt="Consultar" />
+        <input type="text" name="etiqueta" id="etiqueta" required>
+        <input type="submit" value="Pesquisar Etiqueta" id="pesquisar">
+    </form>
+</div> <!-- Fecha Div busca -->
+
+<div id="verRegistros">
+    <table border="1" id="relatorio_mes">
+        <thead>
+        <tr>
+            <th title="Exemplo: M0XXXX">ETIQUETA</th>
+            <th title="Exemplo: DEFESA CIVIL">LOCAL</th>
+            <th title="DESCREVER RESUMIDAMENTE">PROBLEMA RELATADO</th>
+            <th title="DESCREVER RESUMIDAMENTE">O QUE FOI FEITO?</th>
+            <th title="SIM ou NÃO">KASPERSKY</th>
+            <th title="Exemplo: WIN7/8/LINUX EDUCACIONAL">S.O.</th>
+            <th title="SIM ou NÃO">UTILIZOU WDS?</th>
+            <th title="Número da Ordem de serviço">Nº O.S.</th>
+            <th TITLE="NOME TÉCNICO">TÉCNICO</th>
+            <th TITLE="Data">DATA</th>
+            <th TITLE="Excluir">Excluir</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!--<tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>-->
+        </tbody>
+    </table>
+
+</div> <!-- Fecha Div verRegistros -->
+<!-- --------------------------------------------------------------------------------- -->
+<!-- --------------------------------------------------------------------------------- -->
+<!-- --------------------------------------------------------------------------------- -->
+<!-- --------------------------------------------------------------------------------- -->
+<!-- --------------------------------------------------------------------------------- -->
+<footer>
+    Ferramenta analítica desenvolvida por <a href="https://br.linkedin.com/in/ksrenan" target="_blank">Renan Rodrigues</a>
+</footer>
+</body>
+</html>

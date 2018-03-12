@@ -1,0 +1,107 @@
+@font-face {
+    font-family: "VerdanaB";
+    src: url("fonts/Verdana.ttf");
+}
+
+body{
+    font-family: VerdanaB;
+    margin: 0px;
+}
+header{
+    text-align: center;
+    width: 800px;
+    margin: 0 auto;
+    padding-top: 5px;
+}
+header h1{
+    float: right;
+}
+footer{
+    text-align: center;
+    background-color: #cccccc;
+    margin-top: 20px;
+}
+table{
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+table thead{
+    background-color: #cccccc;
+}
+h3{
+    text-align: center;
+}
+#menu{
+    /*text-align: center;*/
+    /*padding-bottom: 20px;*/
+    display: inline;
+}
+#opition1{
+    background-color: #98FB98;
+    height: 100px;
+    width: 33.333333333%;
+    float: left;
+    text-align: center;
+}
+#opition1 img{
+    width: 50px;
+    height: 50px;
+    padding-top: 10px;
+}
+#opition1 label{
+    display: block;
+}
+#opition2{
+    background-color: #cccccc;
+    height: 100px;
+    width: 33.333333333%;
+    float: right;
+    text-align: center;
+}
+#opition2 img{
+    width: 50px;
+    height: 50px;
+    padding-top: 10px;
+}
+#opition2 label{
+    display: block;
+}
+#opition3{
+    background-color: #87CEFA;
+    height: 100px;
+    width: 33.333333333%;
+    float: right;
+    text-align: center;
+}
+#opition3 img{
+    width: 50px;
+    height: 50px;
+    padding-top: 10px;
+}
+#opition3 label{
+    display: block;
+}
+#mensagem{
+    width: 100%;
+    height: 40px;
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 10px;
+    text-align: center;
+    padding-top: 30px;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    cursor: pointer;
+
+}
+.camposTexto{
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+#busca{
+    text-align: center;
+    padding-bottom: 15px;
+}
